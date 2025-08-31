@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email,setemail] = useState('');
   const [password,setpassword] = useState('');
 
@@ -11,6 +12,8 @@ export default function Login() {
         try{  
         const res = await axios.post('http://localhost:5000/api/login',{email,password});
         console.log('login successful:', res.data);
+        localStorage.setItem("isLoggedIn", "true");
+        navigate("/home")
         } catch (error) {
         console.error('login failed:', error.response?.data || error.message);
      }
