@@ -12,7 +12,7 @@ export default function Login() {
         try{  
         const res = await axios.post('http://localhost:5000/api/login',{email,password});
         console.log('login successful:', res.data);
-        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token",res.data.token);
         navigate("/home")
         } catch (error) {
         console.error('login failed:', error.response?.data || error.message);
