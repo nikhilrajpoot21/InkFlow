@@ -1,7 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
-export default function dashboard() {
+export default function Dashboard() {
+    const [posts, setPosts] = useState([]);
+
+    useEffect(()=>{
+    const fetchPost = async () =>{
+      try{
+      const token = localStorage.getItem("token");
+      const res = await axios.get('http://localhost:5000/user/post',{ headers: { Authorization: `Bearer ${token}` }})
+      
+      console.log(res.data)
+      setPosts(res.data)
+      }catch(err){
+        console.error("Failed to fetch posts:", err.response?.data || err.message);
+      }
+    };
+    fetchPost();
+    },[]);
+
+
   return(
     <div className="bg-[#f5f5f0] min-h-screen flex">
       {/* Sidebar */}
@@ -20,22 +39,22 @@ export default function dashboard() {
       <main className="flex-1 p-10">
         {/* Hero / Welcome */}
         <div className="bg-white p-6 rounded-2xl shadow-md border border-[#d4cfc7] mb-10">
-          <h1 className="text-3xl font-bold text-[#2c2c2c]">Welcome back, Nikhil 👋</h1>
+          <h1 className="text-3xl font-bold text-[#2c2c2c]">Welcome back, {posts[0].author.name.split(" ")[0]} 👋</h1>
           <p className="text-[#6b6b6b] mt-2">Here’s what’s happening with your blogs today.</p>
         </div>
 
         {/* Stats Section */}
         <div className="grid grid-cols-3 gap-6 mb-10">
           <div className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] text-center">
-            <h3 className="text-xl font-semibold text-[#2c2c2c]">12</h3>
+            <h3 className="text-xl font-semibold text-[#2c2c2c]">{posts.length}</h3>
             <p className="text-[#6b6b6b]">Published Blogs</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] text-center">
-            <h3 className="text-xl font-semibold text-[#2c2c2c]">5</h3>
+            <h3 className="text-xl font-semibold text-[#2c2c2c]">5D</h3>
             <p className="text-[#6b6b6b]">Drafts</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] text-center">
-            <h3 className="text-xl font-semibold text-[#2c2c2c]">230</h3>
+            <h3 className="text-xl font-semibold text-[#2c2c2c]">230D</h3>
             <p className="text-[#6b6b6b]">Followers</p>
           </div>
         </div>
@@ -44,10 +63,10 @@ export default function dashboard() {
         <div>
           <h2 className="text-2xl font-semibold text-[#2c2c2c] mb-6">Recent Posts</h2>
           <div className="grid md:grid-cols-2 gap-6">
-            {[1,2,3].map((post) => (
-              <div key={post} className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] hover:shadow-lg transition">
-                <h3 className="text-lg font-semibold text-[#2c2c2c]">Blog Title {post}</h3>
-                <p className="text-[#6b6b6b] mt-2">Short preview of the blog post goes here. Keep it catchy and informative.</p>
+            {posts.map((post) => (
+              <div key={post._id} className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] hover:shadow-lg transition">
+                <h3 className="text-lg font-semibold text-[#2c2c2c]">{post.title}</h3>
+                <p className="text-[#6b6b6b] mt-2">{post.content}</p>
                 <div className="flex justify-between items-center mt-4 text-sm">
                   <span className="text-[#bfae94]">2 days ago</span>
                   <div className="space-x-3">
@@ -64,7 +83,7 @@ export default function dashboard() {
         {/* Call to Action */}
         <div className="mt-10 text-center">
           <Link 
-            to="/create" 
+            to="/createPost" 
             className="inline-block bg-[#2c2c2c] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#1f1f1f] transition"
           >
             ✍️ Write a New Post

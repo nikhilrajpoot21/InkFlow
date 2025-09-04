@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 const CreatePost = () => {
   const [postData, setPostData] = useState({
@@ -13,11 +14,34 @@ const CreatePost = () => {
     setPostData({ ...postData, [name]: value });
   };
 
-  const handlePublish = () => {
-    console.log("New Post Created ✅", postData);
+const handlePublish = async () => {
+  try {
+    const token = localStorage.getItem("token"); // 🔑 include JWT for auth
+    const res = await axios.post(
+      "http://localhost:5000/user/post",
+      {
+        title: postData.title,
+        content: postData.content,
+        tags: postData.tags.split(",").map(tag => tag.trim()), // convert string → array
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // send token
+        },
+      }
+    );
+    console.log("New Post Created:", res.data);
     alert("Your post has been published!");
-    // Here you would send data to backend API
-  };
+    setPostData({
+      title: "",
+      content: "",
+      tags: "",
+    });
+  } catch (err) {
+    console.error("Publish failed:", err.response?.data || err.message);
+  }
+};
+
 
   return (
     <div className="bg-[#f5f5f0] min-h-screen p-10 relative">
