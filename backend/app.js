@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./Routes/auth');
+const postRoutes = require('./Routes/post');
 const app = express();
 const connectDB = require('./db');
 
@@ -13,5 +14,6 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api',authRoutes);
+app.use('/user',postRoutes)
 
 module.exports = app;
