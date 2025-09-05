@@ -5,6 +5,7 @@ import Home from './pages/home';
 import Dashboard from './pages/dashboard';
 import Settings from './pages/settings';
 import CreatePost from './pages/createPost';
+import ViewPost from "./pages/viewPost";
 import ProtectedRoute from './components/protectedRoute';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/createPost" element={<CreatePost />} />
+        <Route path="/post/:id" element={<ViewPost />} />
       </Routes>
     </Router>
   );

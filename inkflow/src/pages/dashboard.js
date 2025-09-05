@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from "react-router-dom";
+import { Link  } from "react-router-dom";
 import axios from 'axios';
 
 export default function Dashboard() {
@@ -9,7 +9,8 @@ export default function Dashboard() {
     const fetchPost = async () =>{
       try{
       const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:5000/user/post',{ headers: { Authorization: `Bearer ${token}` }})
+      if (!token) return;
+      const res = await axios.get('http://localhost:5000/api/posts/user',{ headers: { Authorization: `Bearer ${token}` }})
       
       console.log(res.data)
       setPosts(res.data)
@@ -19,7 +20,10 @@ export default function Dashboard() {
     };
     fetchPost();
     },[]);
-
+   const handleLogout = () => {
+    localStorage.removeItem("token");
+     window.location.href = "/";  // redirect to login
+  };
 
   return(
     <div className="bg-[#f5f5f0] min-h-screen flex">
@@ -30,7 +34,7 @@ export default function Dashboard() {
           <Link to="/home" className="block hover:text-[#bfae94] transition">🏠 Home</Link>
           <Link to="/createPost" className="block hover:text-[#bfae94] transition">✍️ Create Post</Link>
           <Link to="/settings" className="block hover:text-[#bfae94] transition">⚙️ Settings</Link>
-          <Link to="/" className="block text-red-500 hover:text-red-600 transition">🚪 Logout</Link>
+          <button onClick={handleLogout}  className="block text-red-500 hover:text-red-600 transition">🚪 Logout</button>
         </nav>
       </aside>
       
@@ -39,7 +43,7 @@ export default function Dashboard() {
       <main className="flex-1 p-10">
         {/* Hero / Welcome */}
         <div className="bg-white p-6 rounded-2xl shadow-md border border-[#d4cfc7] mb-10">
-          <h1 className="text-3xl font-bold text-[#2c2c2c]">Welcome back, {posts[0].author.name.split(" ")[0]} 👋</h1>
+          <h1 className="text-3xl font-bold text-[#2c2c2c]">Welcome back, {posts[0]?.author?.name?.split(" ")[0] || "Guest"} 👋</h1>
           <p className="text-[#6b6b6b] mt-2">Here’s what’s happening with your blogs today.</p>
         </div>
 
@@ -71,7 +75,9 @@ export default function Dashboard() {
                   <span className="text-[#bfae94]">2 days ago</span>
                   <div className="space-x-3">
                     <button className="text-[#2c2c2c] hover:text-[#bfae94]">✏️ Edit</button>
-                    <button className="text-[#2c2c2c] hover:text-[#bfae94]">👁️ View</button>
+                    <Link to={`/post/${post._id}`} className="text-[#2c2c2c] hover:text-[#bfae94]">
+                      👁️ View
+                    </Link>                    
                     <button className="text-red-500 hover:text-red-600">🗑️ Delete</button>
                   </div>
                 </div>

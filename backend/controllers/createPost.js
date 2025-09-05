@@ -8,7 +8,7 @@ try  {
     title,
     content,
     tags,
-    author: userId,
+    author:  req.user.id,
   })
   await newPost.save();
   res.status(201).json({ message: 'Post save successfully' });
