@@ -8,18 +8,18 @@ exports.getUserPosts = async (req,res) =>{
     res.status(500).json({ error: error.message });
   }
 }
-
-exports.getPostById = async (req,res)=>{
-  try{
-    const post = await Post.findById({author:req.userID}).populate("author","name email");
-    if(!post){
-      res.status(404).json({message:'Post Not Found'})
+exports.getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate("author", "name email");
+    if (!post) {
+      return res.status(404).json({ message: 'Post Not Found' }); // return here
     }
     res.status(200).json(post);
-  }catch(err){
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message }); // use err instead of error
   }
-}
+};
+
 exports.getAllPosts = async (req,res)=>{
   try{
     const post = await Post.find().populate("author","name email").sort({createdAt : -1});
