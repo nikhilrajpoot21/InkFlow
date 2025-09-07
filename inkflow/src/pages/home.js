@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
 import axios from "axios";
+import api from "../utils/api";
 
 export default function Home() {
   const [posts,setPosts] = useState([]);
@@ -9,7 +10,7 @@ export default function Home() {
     const fetchPost = async () =>{
       try{
       const token = localStorage.getItem("token");
-      const res = await axios.get('/api/posts',{ headers: { Authorization: `Bearer ${token}` }})
+      const res = await api.get('/api/posts',{ headers: { Authorization: `Bearer ${token}` }})
       
       console.log(res.data)
       setPosts(res.data)

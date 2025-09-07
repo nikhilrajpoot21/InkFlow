@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import api from "../utils/api";
 
 const CreatePost = () => {
   const [postData, setPostData] = useState({
@@ -24,7 +25,7 @@ const CreatePost = () => {
         return;
       }
 
-      const res = await axios.post(
+      const res = await api.post(
         "/api/posts",
         {
           title: postData.title,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link  } from "react-router-dom";
 import axios from 'axios';
+import api from '../utils/api';
 
 export default function Dashboard() {
     const [posts, setPosts] = useState([]);
@@ -30,7 +31,7 @@ export default function Dashboard() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`/api/posts/${postId}`, {
+      await api.delete(`/api/posts/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(posts.filter((post) => post._id !== postId));

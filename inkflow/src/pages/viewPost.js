@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../utils/api";
 
 export default function ViewPost() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export default function ViewPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`/api/posts/${id}`);
+        const res = await api.get(`/api/posts/${id}`);
         setPost(res.data);
       } catch (err) {
         console.error("Failed to fetch post:", err.response?.data || err.message);
