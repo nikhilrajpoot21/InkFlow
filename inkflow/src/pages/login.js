@@ -7,26 +7,32 @@ export default function Login() {
   const [email,setemail] = useState('');
   const [password,setpassword] = useState('');
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
-  try {  
-    const res = await api.post('/api/auth/login', {email, password});
-    console.log('login successful:', res.data);
-    
-    // Add explicit checks
+  try {
+    const res = await api.post('/api/auth/login', { email, password });
+    console.log('Login successful:', res.data);
     if (res.data.token) {
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("isLoggedIn", "true");
-      console.log('Token saved:', localStorage.getItem("token"));
-      console.log('isLoggedIn saved:', localStorage.getItem("isLoggedIn"));
-      navigate("/home");
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('isLoggedIn', 'true');
+      // Verify token is saved
+      setTimeout(() => {
+        if (localStorage.getItem('token')) {
+          navigate('/home');
+        } else {
+          console.error('Token not saved in localStorage');
+          alert('Login failed: Token not saved');
+        }
+      }, 100); // Small delay to ensure localStorage is updated
     } else {
       console.error('No token in response');
+      alert('Login failed: No token received');
     }
   } catch (error) {
-    console.error('login failed:', error.response?.data || error.message);
+    console.error('Login failed:', error.response?.data || error.message);
+    alert('Login failed: ' + (error.response?.data?.message || error.message));
   }
-}
+};
   return (
       <div className="bg-[#f5f5f0] min-h-screen flex items-center justify-center">
   <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-lg border border-[#d4cfc7]">

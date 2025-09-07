@@ -1,12 +1,13 @@
-import { Navigate } from "react-router-dom";
+// protectedRoute.js
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token"); 
-
+  const token = localStorage.getItem('token');
+  console.log('ProtectedRoute: Token found:', !!token, 'Token:', token);
   if (!token) {
-    return <Navigate to="/" replace />; 
+    console.log('ProtectedRoute: No token, redirecting to /');
+    return <Navigate to='/' replace />;
   }
-
   return children;
 };
 

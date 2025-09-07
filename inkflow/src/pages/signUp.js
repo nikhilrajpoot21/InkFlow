@@ -10,18 +10,24 @@ export default function SignUp() {
     const [email,setemail] = useState('');
     const [password,setpassword] = useState('');
 
-    const handleSignup = async (e) =>{
-        e.preventDefault();
-        try{  
-        const res = await api.post('/api/auth/signUp',{name,username,email,password});
-        console.log('Signup successful:', res.data);
-        localStorage.setItem("token", "some-token-if-provided"); // Only if backend returns token
-        localStorage.setItem("isLoggedIn", "true");
-        navigate('/')
-        } catch (error) {
-        console.error('Signup failed:', error.response?.data || error.message);
-     }
+const handleSignup = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await api.post('/api/auth/signUp', { name, username, email, password });
+    console.log('Signup successful:', res.data);
+    if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('isLoggedIn', 'true');
+      navigate('/home');
+    } else {
+      alert('Account created successfully! Please log in.');
+      navigate('/');
     }
+  } catch (error) {
+    console.error('Signup failed:', error.response?.data || error.message);
+    alert('Signup failed: ' + (error.response?.data?.message || error.message));
+  }
+};
 
   return (
     <div className="bg-[#f5f5f0] min-h-screen flex items-center justify-center">
