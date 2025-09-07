@@ -3,7 +3,6 @@ const Post = require("../Models/post");
 exports.createPost = async (req,res) => {
 try  {
   const {title,content,tags} = req.body;
-  const userId = req.userID;
   const newPost = new Post({
     title,
     content,

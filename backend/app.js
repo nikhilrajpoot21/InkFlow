@@ -9,17 +9,19 @@ connectDB();
 
 const allowedOrigins = [
   'http://localhost:3000',              
-  'https://inkflow84x.netlify.app'    
+  'https://inkflow24x.netlify.app',
+  'https://inkflow24x.netlify.app/'  
 ];
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    if (!origin) return callback(null, true); // allow non-browser requests
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log('Blocked CORS for origin:', origin);
+      return callback(new Error('CORS not allowed'), false);
     }
-    return callback(null, true);
   },
   credentials: true
 }));

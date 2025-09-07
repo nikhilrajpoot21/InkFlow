@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Link  } from "react-router-dom";
-import axios from 'axios';
 import api from '../utils/api';
 
 export default function Dashboard() {
@@ -11,7 +10,7 @@ export default function Dashboard() {
       try{
       const token = localStorage.getItem("token");
       if (!token) return;
-      const res = await axios.get('http://localhost:5000/api/posts/user',{ headers: { Authorization: `Bearer ${token}` }})
+      const res = await api.get('/api/posts/user',{ headers: { Authorization: `Bearer ${token}` }})
       
       console.log(res.data)
       setPosts(res.data)

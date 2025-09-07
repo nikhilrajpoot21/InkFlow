@@ -13,6 +13,7 @@ export default function Login() {
         const res = await api.post('/api/auth/login',{email,password});
         console.log('login successful:', res.data);
         localStorage.setItem("token",res.data.token);
+        localStorage.setItem("isLoggedIn", "true");
         navigate("/home")
         } catch (error) {
         console.error('login failed:', error.response?.data || error.message);

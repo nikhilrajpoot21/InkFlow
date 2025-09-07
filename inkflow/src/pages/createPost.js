@@ -15,7 +15,7 @@ const CreatePost = () => {
   };
 
   const handlePublish = async (e) => {
-    e.preventDefault(); // ✅ stop reload
+    e.preventDefault(); 
 
     try {
       const token = localStorage.getItem("token");
