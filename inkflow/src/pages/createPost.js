@@ -25,7 +25,7 @@ const CreatePost = () => {
       }
 
       const res = await axios.post(
-        "https://inkflow-9dh6.onrender.com/api/posts",
+        "/api/posts",
         {
           title: postData.title,
           content: postData.content,

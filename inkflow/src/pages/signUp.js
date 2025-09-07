@@ -13,7 +13,7 @@ export default function SignUp() {
     const handleSignup = async (e) =>{
         e.preventDefault();
         try{  
-        const res = await axios.post('https://inkflow-9dh6.onrender.com/api/auth/signUp',{name,username,email,password});
+        const res = await axios.post('/api/auth/signUp',{name,username,email,password});
         console.log('Signup successful:', res.data);
             navigate('/')
         } catch (error) {

@@ -30,7 +30,7 @@ export default function Dashboard() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://inkflow-9dh6.onrender.com/api/posts/${postId}`, {
+      await axios.delete(`/api/posts/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(posts.filter((post) => post._id !== postId));
