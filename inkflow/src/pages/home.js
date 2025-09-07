@@ -5,21 +5,37 @@ import api from "../utils/api";
 export default function Home() {
   const [posts,setPosts] = useState([]);
   const navigate = useNavigate()
-    useEffect(()=>{
-    const fetchPost = async () =>{
-      try{
-      const token = localStorage.getItem("token");
-      const res = await api.get('/api/posts',{ headers: { Authorization: `Bearer ${token}` }})
-      
-      console.log(res.data)
-      setPosts(res.data)
-      }catch(err){
-        console.error("Failed to fetch posts:", err.response?.data || err.message);
+    // home.js
+// home.js
+useEffect(() => {
+  const fetchPost = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      console.log('home.js: Fetching posts with token', token);
+      if (!token) {
+        console.log('home.js: No token, skipping fetch');
+        return;
       }
-    };
-    fetchPost();
-    },[]);
-
+      const res = await api.get('/api/posts', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('home.js: Posts fetched', res.data);
+      setPosts(res.data);
+    } catch (err) {
+      console.error('home.js: Failed to fetch posts', {
+        error: err.response?.data || err.message,
+        status: err.response?.status,
+      });
+      if (err.response?.status === 401) {
+        console.log('home.js: Unauthorized, clearing token and redirecting');
+        localStorage.removeItem('token');
+        localStorage.removeItem('isLoggedIn');
+        navigate('/');
+      }
+    }
+  };
+  fetchPost();
+}, [navigate]);
     const handleLogout = () => {
     localStorage.removeItem("token");
     setPosts([]);   // clear feed state

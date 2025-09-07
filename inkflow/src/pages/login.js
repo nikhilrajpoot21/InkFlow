@@ -7,29 +7,36 @@ export default function Login() {
   const [email,setemail] = useState('');
   const [password,setpassword] = useState('');
 
+// login.js
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const res = await api.post('/api/auth/login', { email, password });
-    console.log('Login successful:', res.data);
+    console.log('Login response:', res.data);
     if (res.data.token) {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('isLoggedIn', 'true');
-      // Verify token is saved
+      // Wait for localStorage to update
       setTimeout(() => {
-        if (localStorage.getItem('token')) {
+        const token = localStorage.getItem('token');
+        console.log('login.js: Token after set', token);
+        if (token) {
+          console.log('login.js: Navigating to /home');
           navigate('/home');
         } else {
-          console.error('Token not saved in localStorage');
+          console.error('login.js: Token not saved');
           alert('Login failed: Token not saved');
         }
-      }, 100); // Small delay to ensure localStorage is updated
+      }, 100);
     } else {
-      console.error('No token in response');
+      console.error('login.js: No token in response', res.data);
       alert('Login failed: No token received');
     }
   } catch (error) {
-    console.error('Login failed:', error.response?.data || error.message);
+    console.error('login.js: Login failed', {
+      error: error.response?.data || error.message,
+      status: error.response?.status,
+    });
     alert('Login failed: ' + (error.response?.data?.message || error.message));
   }
 };
