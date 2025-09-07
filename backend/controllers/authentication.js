@@ -1,27 +1,35 @@
-const User  = require('../Models/user.js');
-const bcrypt = require('bcrypt')
+// authentication.js
+const User = require('../Models/user.js');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// authentication.js
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('loginUser: User not found', { email });
       return res.status(401).json({ message: 'User not found' });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log('loginUser: Invalid credentials', { email });
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    console.log('loginUser: Generating token', {
+      userID: user._id,
+      email,
+      JWT_SECRET: process.env.JWT_SECRET?.substring(0, 8) + '...',
+      serverTime: new Date().toISOString(),
+    });
+    const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
     return res.status(200).json({ message: 'Login successful', user: { id: user._id, email: user.email }, token });
   } catch (err) {
+    console.error('loginUser: Error', err.message);
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-// authentication.js
 exports.signUpUser = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
@@ -33,9 +41,10 @@ exports.signUpUser = async (req, res) => {
       password: hashedPassword,
     });
     await newUser.save();
-    const token = jwt.sign({ userID: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(201).json({ message: 'User created successfully', token, user: { id: newUser._id, email: newUser.email } });
+    console.log('signUpUser: User created', { email });
+    return res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('signUpUser: Error', error.message);
+    return res.status(500).json({ error: error.message });
   }
 };

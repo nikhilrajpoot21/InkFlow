@@ -5,37 +5,40 @@ import api from "../utils/api";
 export default function Home() {
   const [posts,setPosts] = useState([]);
   const navigate = useNavigate()
-    // home.js
-// home.js
+
 useEffect(() => {
-  const fetchPost = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      console.log('home.js: Fetching posts with token', token);
-      if (!token) {
-        console.log('home.js: No token, skipping fetch');
-        return;
+    const fetchPost = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        console.log('home.js: Fetching posts with token', token?.substring(0, 20) + '...');
+        if (!token || token.split('.').length !== 3) {
+          console.log('home.js: Invalid token format, redirecting to /');
+          localStorage.removeItem('token');
+          localStorage.removeItem('isLoggedIn');
+          navigate('/');
+          return;
+        }
+        const res = await api.get('/api/posts', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('home.js: Posts fetched', res.data);
+        setPosts(res.data);
+      } catch (err) {
+        console.error('home.js: Failed to fetch posts', {
+          error: err.response?.data || err.message,
+          status: err.response?.status,
+          headers: err.config?.headers,
+        });
+        if (err.response?.status === 401) {
+          console.log('home.js: Unauthorized, clearing token and redirecting');
+          localStorage.removeItem('token');
+          localStorage.removeItem('isLoggedIn');
+          navigate('/');
+        }
       }
-      const res = await api.get('/api/posts', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('home.js: Posts fetched', res.data);
-      setPosts(res.data);
-    } catch (err) {
-      console.error('home.js: Failed to fetch posts', {
-        error: err.response?.data || err.message,
-        status: err.response?.status,
-      });
-      if (err.response?.status === 401) {
-        console.log('home.js: Unauthorized, clearing token and redirecting');
-        localStorage.removeItem('token');
-        localStorage.removeItem('isLoggedIn');
-        navigate('/');
-      }
-    }
-  };
-  fetchPost();
-}, [navigate]);
+    };
+    fetchPost();
+  }, [navigate]);
     const handleLogout = () => {
     localStorage.removeItem("token");
     setPosts([]);   // clear feed state

@@ -27,8 +27,8 @@ useEffect(() => {
         setTimeout(() => {
           const token = localStorage.getItem('token');
           if (token) {
-            console.log('login.js: Navigating to /home', { token });
-            navigate('/home');
+            console.log('login.js: Navigating to /home', { token: token.substring(0, 20) + '...' });
+            navigate('/home', { replace: true });
           } else {
             console.error('login.js: Token not saved');
             alert('Login failed: Token not saved');
