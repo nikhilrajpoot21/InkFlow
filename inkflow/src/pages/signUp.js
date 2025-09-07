@@ -15,7 +15,9 @@ export default function SignUp() {
         try{  
         const res = await api.post('/api/auth/signUp',{name,username,email,password});
         console.log('Signup successful:', res.data);
-            navigate('/')
+        localStorage.setItem("token", "some-token-if-provided"); // Only if backend returns token
+        localStorage.setItem("isLoggedIn", "true");
+        navigate('/')
         } catch (error) {
         console.error('Signup failed:', error.response?.data || error.message);
      }
