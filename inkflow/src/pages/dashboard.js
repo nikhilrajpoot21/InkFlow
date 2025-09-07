@@ -22,7 +22,23 @@ export default function Dashboard() {
     },[]);
    const handleLogout = () => {
     localStorage.removeItem("token");
-     window.location.href = "/";  // redirect to login
+     window.location.href = "/"; 
+  };
+
+  const handleDelete = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPosts(posts.filter((post) => post._id !== postId));
+      alert("Post deleted successfully!");
+    } catch (err) {
+      console.error("Failed to delete post:", err.response?.data || err.message);
+      alert("Failed to delete post.");
+    }
   };
 
   return(
@@ -54,11 +70,11 @@ export default function Dashboard() {
             <p className="text-[#6b6b6b]">Published Blogs</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] text-center">
-            <h3 className="text-xl font-semibold text-[#2c2c2c]">5D</h3>
+            <h3 className="text-xl font-semibold text-[#2c2c2c]">currently Not Available</h3>
             <p className="text-[#6b6b6b]">Drafts</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow border border-[#d4cfc7] text-center">
-            <h3 className="text-xl font-semibold text-[#2c2c2c]">230D</h3>
+            <h3 className="text-xl font-semibold text-[#2c2c2c]">currently Not Available</h3>
             <p className="text-[#6b6b6b]">Followers</p>
           </div>
         </div>
@@ -74,11 +90,10 @@ export default function Dashboard() {
                 <div className="flex justify-between items-center mt-4 text-sm">
                   <span className="text-[#bfae94]">2 days ago</span>
                   <div className="space-x-3">
-                    <button className="text-[#2c2c2c] hover:text-[#bfae94]">✏️ Edit</button>
                     <Link to={`/post/${post._id}`} className="text-[#2c2c2c] hover:text-[#bfae94]">
                       👁️ View
                     </Link>                    
-                    <button className="text-red-500 hover:text-red-600">🗑️ Delete</button>
+                    <button onClick={() => handleDelete(post._id)} className="text-red-500 hover:text-red-600">🗑️ Delete</button>
                   </div>
                 </div>
               </div>
