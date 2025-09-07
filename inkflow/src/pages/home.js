@@ -9,7 +9,7 @@ export default function Home() {
     const fetchPost = async () =>{
       try{
       const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:5000/api/posts',{ headers: { Authorization: `Bearer ${token}` }})
+      const res = await axios.get('https://inkflow-9dh6.onrender.com/api/posts',{ headers: { Authorization: `Bearer ${token}` }})
       
       console.log(res.data)
       setPosts(res.data)

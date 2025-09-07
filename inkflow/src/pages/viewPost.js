@@ -11,7 +11,7 @@ export default function ViewPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts/${id}`);
+        const res = await axios.get(`https://inkflow-9dh6.onrender.com/api/posts/${id}`);
         setPost(res.data);
       } catch (err) {
         console.error("Failed to fetch post:", err.response?.data || err.message);
