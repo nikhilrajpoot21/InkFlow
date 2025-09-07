@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 
@@ -8,38 +8,44 @@ export default function Login() {
   const [password,setpassword] = useState('');
 
 // login.js
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await api.post('/api/auth/login', { email, password });
-    console.log('Login response:', res.data);
-    if (res.data.token) {
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('isLoggedIn', 'true');
-      // Wait for localStorage to update
-      setTimeout(() => {
-        const token = localStorage.getItem('token');
-        console.log('login.js: Token after set', token);
-        if (token) {
-          console.log('login.js: Navigating to /home');
-          navigate('/home');
-        } else {
-          console.error('login.js: Token not saved');
-          alert('Login failed: Token not saved');
-        }
-      }, 100);
-    } else {
-      console.error('login.js: No token in response', res.data);
-      alert('Login failed: No token received');
+useEffect(() => {
+    console.log('login.js: Clearing localStorage on login page load');
+    localStorage.removeItem('token');
+    localStorage.removeItem('isLoggedIn');
+    console.log('login.js: localStorage after clear', localStorage.getItem('token'));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('/api/auth/login', { email, password });
+      console.log('login.js: Login response', res.data);
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('isLoggedIn', 'true');
+        console.log('login.js: Token saved', localStorage.getItem('token'));
+        setTimeout(() => {
+          const token = localStorage.getItem('token');
+          if (token) {
+            console.log('login.js: Navigating to /home', { token });
+            navigate('/home');
+          } else {
+            console.error('login.js: Token not saved');
+            alert('Login failed: Token not saved');
+          }
+        }, 100);
+      } else {
+        console.error('login.js: No token in response', res.data);
+        alert('Login failed: No token received');
+      }
+    } catch (error) {
+      console.error('login.js: Login failed', {
+        error: error.response?.data || error.message,
+        status: error.response?.status,
+      });
+      alert('Login failed: ' + (error.response?.data?.message || error.message));
     }
-  } catch (error) {
-    console.error('login.js: Login failed', {
-      error: error.response?.data || error.message,
-      status: error.response?.status,
-    });
-    alert('Login failed: ' + (error.response?.data?.message || error.message));
-  }
-};
+  };
   return (
       <div className="bg-[#f5f5f0] min-h-screen flex items-center justify-center">
   <div className="w-full max-w-md p-8 bg-white shadow-xl rounded-lg border border-[#d4cfc7]">
