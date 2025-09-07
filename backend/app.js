@@ -7,23 +7,42 @@ const connectDB = require('./db');
 
 connectDB();
 
-const allowedOrigins = [
-  'http://localhost:3000',              
-  'https://inkflow24x.netlify.app',
-  'https://inkflow24x.netlify.app/'  
-];
-
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow non-browser requests
-    if (allowedOrigins.includes(origin)) {
+    console.log('=== CORS DEBUG ===');
+    console.log('Request origin:', origin);
+    console.log('Origin type:', typeof origin);
+    console.log('Origin length:', origin ? origin.length : 'null');
+    console.log('==================');
+    
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) {
+      console.log('No origin - allowing');
       return callback(null, true);
-    } else {
-      console.log('Blocked CORS for origin:', origin);
-      return callback(new Error('CORS not allowed'), false);
     }
+    
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://inkflow24x.netlify.app',
+      'https://inkflow24x.netlify.app/'
+    ];
+    
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      console.log('Origin allowed:', origin);
+      return callback(null, true);
+    }
+    
+    // If not allowed, log and reject
+    console.log('Origin BLOCKED:', origin);
+    console.log('Available origins:', allowedOrigins);
+    return callback(new Error('CORS not allowed'), false);
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  optionsSuccessStatus: 200
 }));
 app.use(express.json());
 
